@@ -12,11 +12,15 @@ linkVue.console.addEventListener('message',myListener = e.data.data.postMessage.
 e.data.data.addEventListener('message',function a(evt){if(evt.data.type == 'deactivate'){e.data.data.removeEventListener('message',otherListener); e.data.data.removeEventListener('message',a); linkVue.console.removeEventListener('message',myListener)}})
 
 }
+function alertPort(data){
+data.addEventListener('message',function(e){swal(e.data).then(function(v){data.postMessage(v)})})
+
+}
 window.addEventListener('message',function(e){
 if(linkVue && linkVue.console && e.data.type == 'getConsoleControl'){
 return getConsoleControl(e)
 }
-
+if(e.data.type == 'createAlertPort'){alertPort(e.data.data)}
 });
 var otherVue;
 linkVue = new Vue({
