@@ -20,15 +20,15 @@ window.addEventListener('message',function(e){
 if(linkVue && linkVue.console && e.data.type == 'getConsoleControl'){
 return getConsoleControl(e)
 }
-if(e.data.type == 'createAlertPort'){alertPort(e.data.data)}
+if(e.data.type == 'createAlertPort'){return alertPort(e.data.data)}
 });
 var otherVue;
 linkVue = new Vue({
 el: '#app',
 data: {console: undefined},
 methods: {init: function(callback){send.call(undefined,'init-' + window.location,{data: {elemID: this.$el.id}},callback)}},
-mounted(){var oldID = this.$el.id;var newID = this.$el.id = 'ol-repl-' + (Math.random() * 200000000); this.init((function(mevt){this.$el.id = oldID; otherVue.attach(mevt.data.token); send('getConsole-'+ (Math.random() * 200000000),{type: 'getConsole',data: {token: mevt.data.token}},function(e){this.console = e.data.console}.bind(this)); send('bry-' + (Math.random() * 200000000),{token: mevt.data.token,bryScript: 'main.py'},function(e){})}).bind(this))},
-
+mounted(){var oldID = this.$el.id;var newID = this.$el.id = 'ol-repl-' + (Math.random() * 200000000); this.init((function(mevt){this.$el.id = oldID; otherVue.attach(mevt.data.token); send('getConsole-'+ (Math.random() * 200000000),{type: 'getConsole',data: {token: mevt.data.token}},function(e){this.console = e.data.console}.bind(this)); send('bry-' + (Math.random() * 200000000),{token: mevt.data.token,bryScript: 'main.py'},function(e){})}).bind(this)); window.addEventListener('message',this._messageListener = this.$emit.bind(this,'message'))},
+beforeDestroy(){window.removeEventListener('message',this._messageListener); delete this._messageListener}
 });
 otherVue = new Vue({
 el: '#controls',
